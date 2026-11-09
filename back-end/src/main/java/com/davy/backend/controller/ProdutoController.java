@@ -7,6 +7,7 @@ import com.davy.backend.entity.Produto;
 import com.davy.backend.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Produtos", description = "Endpoints para gerenciamento e consulta de produtos")
@@ -36,9 +38,12 @@ public class ProdutoController {
             @Parameter(description = "Quantidade de itens por página (padrão: 20, máximo: 50)", example = "20")
             @RequestParam(defaultValue = "20") int size,
             @Parameter(description = "Termo de busca por nome (não diferencia maiúsculas de minúsculas)", example = "cadeira")
-            @RequestParam(required = false) String busca
+            @RequestParam(value = "busca", required = false) String busca,
+            @Parameter(description = "Termo de filtro para busca por nome (não diferencia maiúsculas de minúsculas)", example = "cadeira")
+            @RequestParam(value = "filtro", required = false) String filtro
     ) {
-        return produtoService.findAll(busca, page, size)
+        String termo = (busca != null && !busca.isBlank()) ? busca : filtro;
+        return produtoService.findAll(termo, page, size)
                 .map(ProdutoResponseDTO::toDto);
     }
 
@@ -49,22 +54,24 @@ public class ProdutoController {
             @ApiResponse(responseCode = "404", description = "Produto não encontrado", content = @Content)
     })
     @GetMapping("/{id}")
-    public ProdutoResponseDTO findById(@Parameter(description = "Identificador único do produto", required = true) @PathVariable UUID id) {
+    public ProdutoResponseDTO findById(@Parameter(description = "Identificador único do produto", required = true) @PathVariable("id") UUID id) {
         return ProdutoResponseDTO.toDto(produtoService.findById(id));
     }
 
     @Operation(summary = "Buscar produto por filtro", description = "Busca produtos utilizando termo de pesquisa por nome ou descrição")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Produto encontrado",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProdutoResponseDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Produtos encontrados com sucesso",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ProdutoResponseDTO.class)))),
             @ApiResponse(responseCode = "404", description = "Produto não encontrado", content = @Content)
     })
     @GetMapping("/filtro")
-    public ProdutoResponseDTO findByFiltros(
+    public List<ProdutoResponseDTO> findByFiltros(
             @Parameter(description = "Termo de filtro para busca (plural)") @RequestParam(value = "filtros", required = false) String filtros,
             @Parameter(description = "Termo de filtro para busca (singular)") @RequestParam(value = "filtro", required = false) String filtro) {
         String termo = (filtros != null && !filtros.isBlank()) ? filtros : filtro;
-        return ProdutoResponseDTO.toDto(produtoService.findByFiltro(termo));
+        return produtoService.findByFiltro(termo).stream()
+                .map(ProdutoResponseDTO::toDto)
+                .toList();
     }
 
     @Operation(summary = "Cadastrar produto", description = "Cadastra um novo produto no sistema")
@@ -89,7 +96,7 @@ public class ProdutoController {
     })
     @PutMapping("/{id}")
     public ProdutoResponseDTO update(
-            @Parameter(description = "Identificador único do produto a ser atualizado", required = true) @PathVariable UUID id,
+            @Parameter(description = "Identificador único do produto a ser atualizado", required = true) @PathVariable("id") UUID id,
             @RequestBody ProdutoRequestDTO requestDTO) {
         Produto produto = produtoService.update(id, requestDTO.toEntity());
         return ProdutoResponseDTO.toDto(produto);
@@ -102,7 +109,7 @@ public class ProdutoController {
     })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@Parameter(description = "Identificador único do produto a ser excluído", required = true) @PathVariable UUID id) {
+    public void delete(@Parameter(description = "Identificador único do produto a ser excluído", required = true) @PathVariable("id") UUID id) {
         produtoService.delete(id);
     }
 }

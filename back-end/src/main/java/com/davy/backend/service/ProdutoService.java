@@ -63,7 +63,10 @@ public class ProdutoService {
         produtoRepository.delete(produto);
     }
 
-    public Produto findByFiltro(String filtro) {
-        return produtoRepository.findByFiltro(filtro);
+    public List<Produto> findByFiltro(String filtro) {
+        if (filtro == null || filtro.trim().isEmpty()) {
+            return produtoRepository.findAll();
+        }
+        return produtoRepository.findByFiltro(filtro.trim());
     }
 }
