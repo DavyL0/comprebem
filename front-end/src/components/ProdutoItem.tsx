@@ -29,7 +29,7 @@ export function ProdutoItem({
             <Text style={styles.descricao}>{produto.descricao}</Text>
 
             <View style={styles.footer}>
-                <Text style={styles.preco}>R$ {produto.preco.toFixed(2)}</Text>
+                <Text style={styles.preco}>R$ {produto.preco?.toFixed(2) ?? '0.00'}</Text>
                 <View style={styles.actionsContainer}>
                     <TouchableOpacity
                         onPress={() => setFavorito(!favorito)}

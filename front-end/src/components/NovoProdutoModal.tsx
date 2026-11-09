@@ -79,7 +79,7 @@ export default function NovoProdutoModal({
         const precoNumerico = Number(preco.trim().replace(',', '.'));
 
         const novoProduto: Produto = {
-            id: Date.now(),
+            produtoId: String(Date.now()),
             nome: nome.trim(),
             categoria: categoria.trim() || 'Geral',
             preco: Number(precoNumerico.toFixed(2)),

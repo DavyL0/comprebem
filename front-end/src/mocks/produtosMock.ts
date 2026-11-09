@@ -2,7 +2,7 @@ import {Produto} from "../types/produto";
 
 export const produtosMock: Produto[] = [
     {
-        id: 1,
+        produtoId: '1',
         nome: 'Cadeira Confort Plus',
         preco: 349.9,
         categoria: 'Móveis',
@@ -10,7 +10,7 @@ export const produtosMock: Produto[] = [
         imagem: 'https://picsum.photos/100',
     },
     {
-        id: 2,
+        produtoId: '2',
         nome: 'Mesa para Escritório',
         preco: 589.0,
         categoria: 'Móveis',
@@ -18,7 +18,7 @@ export const produtosMock: Produto[] = [
         imagem: 'https://picsum.photos/100',
     },
     {
-        id: 3,
+        produtoId: '3',
         nome: 'Luminária de Mesa LED',
         preco: 79.9,
         categoria: 'Iluminação',
@@ -26,7 +26,7 @@ export const produtosMock: Produto[] = [
         imagem: 'https://picsum.photos/100',
     },
     {
-        id: 4,
+        produtoId: '4',
         nome: 'Suporte para Notebook',
         preco: 129.9,
         categoria: 'Acessórios',

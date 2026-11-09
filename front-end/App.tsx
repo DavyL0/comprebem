@@ -1,27 +1,18 @@
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {StatusBar} from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StatusBar } from 'expo-status-bar';
 import TelaListaProdutos from './src/screens/TelaListaProdutos';
 import TelaDetalheProduto from './src/screens/TelaDetalheProduto';
-import {theme} from './src/theme/theme';
-import {produtosMock} from "./src/mocks/produtosMock";
-import {Produto} from "./src/types/produto";
-import {useState} from "react";
+import { theme } from './src/theme/theme';
 
 export type RootStackParamList = {
     ListaProdutos: undefined;
-    DetalheProduto: { produtoId: number };
+    DetalheProduto: { produtoId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-    const [produtos, setProdutos] = useState<Produto[]>(produtosMock);
-
-    function adicionarProduto(novoProduto: Produto) {
-        setProdutos((atual) => [novoProduto, ...atual]);
-    }
-
     return (
         <NavigationContainer>
             <StatusBar style="light"/>
@@ -34,25 +25,15 @@ export default function App() {
                     contentStyle: {backgroundColor: theme.colors.background},
                 }}
             >
-                <Stack.Screen name="ListaProdutos"
-                              options={{headerShown: false}}>
-                    {(props) => (
-                        <TelaListaProdutos
-                            {...props}
-                            produtos={produtos}
-                            onAdicionarProduto={adicionarProduto}
-                        />
-                    )}
-
-                </Stack.Screen>
-                <Stack.Screen name="DetalheProduto">
-                    {(props) => (
-                        <TelaDetalheProduto
-                            {...props}
-                            produtos={produtos}
-                        />
-                    )}
-                </Stack.Screen>
+                <Stack.Screen
+                    name="ListaProdutos"
+                    component={TelaListaProdutos}
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="DetalheProduto"
+                    component={TelaDetalheProduto}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );

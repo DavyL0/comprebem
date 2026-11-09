@@ -14,7 +14,7 @@ export function DetalheProduto({ produto }: { produto: Produto }) {
                 <Text style={styles.categoria}>{produto.categoria}</Text>
 
                 <Text style={styles.label}>Preço</Text>
-                <Text style={styles.preco}>R$ {produto.preco.toFixed(2)}</Text>
+                <Text style={styles.preco}>R$ {produto.preco?.toFixed(2) ?? '0.00'}</Text>
 
                 <Text style={styles.label}>Descrição</Text>
                 <Text style={styles.descricao}>{produto.descricao}</Text>

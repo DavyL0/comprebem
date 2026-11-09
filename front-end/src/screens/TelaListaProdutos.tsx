@@ -1,13 +1,15 @@
 import { NavigationProp } from '@react-navigation/native';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, FlatList, TextInput, View, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Produto } from '../types/Produto';
+import { Produto } from '../types/produto';
 import { getProdutos } from '../service/produto-service';
 import { RootStackParamList } from '../../App';
 
-type Props = NavigationProp<RootStackParamList, 'TelaListaProdutos'>;
+type Props = {
+    navigation: NavigationProp<RootStackParamList, 'ListaProdutos'>;
+};
 
 const CHAVE_FAVORITOS = '@compre-bem:favoritos';
 
@@ -23,9 +25,7 @@ export default function ListaProdutos({ navigation }: Props) {
     const [nome, setNome] = useState('');
     const [preco, setPreco] = useState('');
 
-    const [favoritos, setFavoritos] = useState([]);
-
-    const buscandoMais = useRef(false);
+    const [favoritos, setFavoritos] = useState<string[]>([]);
 
     useEffect(() => {
         AsyncStorage.getItem(CHAVE_FAVORITOS).then(valor => {
@@ -35,15 +35,10 @@ export default function ListaProdutos({ navigation }: Props) {
         });
     }, []);
 
-    const produtosFiltrados = useMemo(() => {
-        return produtos.filter(produto =>
-            produto.nome.toLowerCase().includes(busca.toLowerCase())
-        );
-    }, [busca, produtos]);
-
     function validarSalvarProduto() {
         if (validarProduto(nome, preco)) {
             const novoProduto: Produto = {
+                produtoId: String(Date.now()),
                 nome: nome,
                 preco: parseFloat(preco),
                 descricao: descricao
@@ -77,10 +72,9 @@ export default function ListaProdutos({ navigation }: Props) {
         });
     }
 
-
     useEffect(() => {
         getProdutos(pagina, busca).then((resposta) => {
-            setProdutos(resposta);
+            setProdutos(resposta.content || []);
         });
     }, [pagina, busca]);
 
@@ -133,21 +127,21 @@ export default function ListaProdutos({ navigation }: Props) {
 
                 <ScrollView>
                     <FlatList
-                        data={produtosFiltrados}
-                        keyExtractor={(item) => item.id}
+                        data={produtos}
+                        keyExtractor={(item, index) => item.produtoId ?? String(index)}
                         renderItem={({ item }) => (
                             <View style={styles.item}>
                                 <TouchableOpacity
                                     style={styles.itemInfo}
-                                    onPress={() => navigation.navigate('TelaDetalheProduto', { produtoId: item.id })}>
+                                    onPress={() => navigation.navigate('DetalheProduto', { produtoId: item.produtoId ?? '' })}>
                                     <Text style={styles.nome}>{item.nome}</Text>
                                     <Text style={styles.preco}>R$ {item.preco}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.botaoFavorito}
-                                    onPress={() => alterarFavorito(item.id)}>
+                                    onPress={() => alterarFavorito(item.produtoId ?? '')}>
                                     <Text style={styles.favoritoTexto}>
-                                        {favoritos.includes(item.id) ? '♥' : '♡'}
+                                        {favoritos.includes(item.produtoId ?? '') ? '♥' : '♡'}
                                     </Text>
                                 </TouchableOpacity>
                             </View>

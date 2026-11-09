@@ -1,26 +1,45 @@
-import { Text, View, Image, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
-import { NavigationProp } from '@react-navigation/native';
 import { Produto } from '../types/produto';
+import { getProdutoPorId } from '../service/produto-service';
 
-type Props = NavigationProp<RootStackParamList, 'TelaDetalheProduto'> & {
-    produtos: Produto[];
+type Props = {
+    route: RouteProp<RootStackParamList, 'DetalheProduto'>;
 };
 
 function DetalheProduto({ produto }: { produto: Produto }) {
     return (
         <View style={styles.container}>
             <Text style={styles.nome}>{produto.nome}</Text>
-            <Text style={styles.preco}>R$ {produto.preco.toFixed(2)}</Text>
+            <Text style={styles.preco}>R$ {produto.preco?.toFixed(2)}</Text>
             <Text style={styles.descricao}>{produto.descricao}</Text>
         </View>
     );
 }
 
-export default function TelaDetalheProduto({ route, produtos }: Props) {
+export default function TelaDetalheProduto({ route }: Props) {
     const { produtoId } = route.params;
-    const produto = produtos.find(p => p.id === produtoId);
-    return DetalheProduto({ produto: produto! });
+    const [produto, setProduto] = useState<Produto | null>(null);
+
+    useEffect(() => {
+        if (produtoId) {
+            getProdutoPorId(produtoId).then((res) => {
+                setProduto(res);
+            });
+        }
+    }, [produtoId]);
+
+    if (!produto) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
+    return <DetalheProduto produto={produto} />;
 }
 
 const styles = StyleSheet.create({
