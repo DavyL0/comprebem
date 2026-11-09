@@ -1,4 +1,4 @@
-import {Produto} from "../types/Produto";
+import {Produto} from "../types/produto";
 
 export const produtosMock: Produto[] = [
     {

@@ -13,7 +13,7 @@ import {
 import MaterialDesignIcons from "@react-native-vector-icons/material-design-icons";
 import {useState} from "react";
 import {theme} from "../theme/theme";
-import type {Produto} from "../types/Produto";
+import type {Produto} from "../types/produto";
 
 type NovoProdutoModalProps = {
     visible: boolean;

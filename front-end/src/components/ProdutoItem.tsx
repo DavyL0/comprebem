@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import type {Produto} from '../types/Produto';
+import type {Produto} from '../types/produto';
 import {theme} from "../theme/theme";
 
 export function ProdutoItem({

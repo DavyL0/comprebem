@@ -1,4 +1,4 @@
-import {Produto} from "../types/Produto";
+import {Produto} from "../types/produto";
 import {ScrollView, StyleSheet, View, Text} from "react-native";
 import {theme} from "../theme/theme";
 

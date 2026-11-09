@@ -5,7 +5,7 @@ import TelaListaProdutos from './src/screens/TelaListaProdutos';
 import TelaDetalheProduto from './src/screens/TelaDetalheProduto';
 import {theme} from './src/theme/theme';
 import {produtosMock} from "./src/mocks/produtosMock";
-import {Produto} from "./src/types/Produto";
+import {Produto} from "./src/types/produto";
 import {useState} from "react";
 
 export type RootStackParamList = {
